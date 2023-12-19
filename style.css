@@ -1,0 +1,143 @@
+:root{
+	--color-twitch-1: #9147ffe6;
+	--color-twitch-2: #5c16c5;
+	--color-twitch-3: #863ef1;
+	--color-twitch-4: #9147ff;
+	--color-twitch-5: #a000ff;
+	--color-twitch-6: #5c0280;
+	--color-twitch-7: #9147ff;
+	--color-dark-is-not-black1: #18181b;
+	--color-dark-is-not-black2: #1f1f23;
+}
+[class*="popup_button__"][class*="popup_is_highlight__"],
+[class*="live_chatting_input_send_button__"][class*="live_chatting_input_is_active__"],
+[aria-pressed=true],
+[class*="community_write_post_button__"],
+[class*="button_container__"][class*="button_highlight__"],
+[class*="subscribe_button__"][class*="subscribe_highlight__"],
+[class*="manage_discount__"],
+[class*="subscription_discount__"],
+[class*="channel_home_no_content_button__"],
+[class*="channel_manage_basic_save_button__"],
+[class*="cleanbot_popup_button__"][class*="cleanbot_popup_highlight__"],
+[class*="live_chatting_popup_initial_agree_button__"],
+[class*="live_chatting_popup_rule_agree_button__"],
+[class*="live_chatting_ranking_guide_button__"],
+[class*="vod_recommend_switch__"]:active [class*="vod_recommend_checkbox__"]:checked+[class*="vod_recommend_slider__"],[class*="vod_recommend_switch__"]:focus-visible [class*="vod_recommend_checkbox__"]:checked+[class*="vod_recommend_slider__"],[class*="vod_recommend_switch__"]:hover [class*="vod_recommend_checkbox__"]:checked+[class*="vod_recommend_slider__"] {
+	background-color: var(--color-twitch-1) !important;
+}
+
+[aria-expanded=true]:hover,
+[class*="subscribe_subtitle__"] strong,
+[class*="recommend_live_category__"],
+[class*="top_banner_date__"],
+[class*="video_information_game__"],
+[class*="live_chatting_popup_rule_highlight__"] {
+	color: var(--color-twitch-1) !important;
+}
+
+
+[class*="subscribe_thumbnail__"][class*="subscribe_is_live__"] {
+	background-image: linear-gradient(#1d1f22,#1d1f22),linear-gradient(180deg,var(--color-twitch-5),var(--color-twitch-6))
+}
+input:checked+[class*="manage_cycle_button__"], 
+input:checked+[class*="subscription_cycle_button__"], 
+[class*="channel_profile_thumbnail__"][class*="channel_profile_is_live__"], 
+[class*="recommend_live_profile__"], 
+[class*="navigator_profile__"][class*="navigator_is_live__"], 
+[class*="toolbar_profile__"]:active,[class*="toolbar_profile__"]:focus-visible,[class*="toolbar_profile__"]:hover, 
+[class*="video_information_thumbnail__"][class*="video_information_is_live__"], 
+[class*="live_information_player_profile__"], 
+[class*="profile_thumbnail__"][class*="profile_is_live__"] {
+	background-image: linear-gradient(#141517,#141517),linear-gradient(180deg,var(--color-twitch-3),var(--color-twitch-4)) !important;
+}
+[class*="live_chatting_guide_container__"] em{
+	color: var(--color-twitch-7) !important
+}
+[class*="charge_complete_highlight__"],
+[class*="manage_auto_charge_highlight__"],
+[class*="live_chatting_popup_initial_link__"],
+[class*="live_chatting_ranking_guide_text__"] strong {
+	color: var(--color-twitch-3) !important;
+}
+[class*="popup_button__"][class*="popup_is_highlight__"],
+[class*="live_chatting_input_send_button__"][class*="live_chatting_input_is_active__"],
+[aria-pressed=true],
+[class*="community_write_post_button__"],
+[class*="button_container__"][class*="button_highlight__"],
+[class*="subscribe_button__"][class*="subscribe_highlight__"],
+[class*="manage_discount__"],
+[class*="subscription_discount__"],
+[class*="channel_home_no_content_button__"],
+[class*="channel_manage_basic_save_button__"],
+[class*="cleanbot_popup_button__"][class*="cleanbot_popup_highlight__"],
+[class*="live_chatting_popup_initial_agree_button__"],
+[class*="live_chatting_popup_rule_agree_button__"],
+[class*="live_chatting_ranking_guide_button__"],
+[class*="vod_recommend_switch__"]:active [class*="vod_recommend_checkbox__"]:checked+[class*="vod_recommend_slider__"],[class*="vod_recommend_switch__"]:focus-visible [class*="vod_recommend_checkbox__"]:checked+[class*="vod_recommend_slider__"],[class*="vod_recommend_switch__"]:hover [class*="vod_recommend_checkbox__"]:checked+[class*="vod_recommend_slider__"]{
+	background-color: var(--color-twitch-1) !important;
+	color:#fff !important;
+}
+[aria-expanded=true]:hover,
+[class*="subscribe_subtitle__"] strong,
+[class*="recommend_live_category__"],
+[class*="top_banner_date__"],
+[class*="video_information_game__"],
+[class*="live_chatting_popup_rule_highlight__"]{
+	color: var(--color-twitch-1) !important;
+}
+
+[class*="toolbar_container__"]{
+	background-color: var(--color-dark-is-not-black1) !important;
+}
+[class*="live_chatting_message_wrapper__"]{
+	width:100% !important;
+}
+body,
+[class*="header_area__"]{
+	background-color: var(--color-dark-is-not-black1) !important;
+}
+[class*="header_wrapper__"]{
+	background-color: var(--color-dark-is-not-black2) !important;
+}
+[class*="button_container__"]{
+	font-weight: bold !important;
+}
+[class*="navigator_item__"] [class*="name_text__"]{
+	font-size:14px !important;
+	color:#dedee3 !important;
+	font-weight:bold !important;
+}
+[class*="navigator_image__"]{
+	width:30px !important;height:30px !important;
+}
+[class*="navigator_title__"]{
+	font-size:14px !important;
+	color:#efeff1 !important;
+	font-weight:bold !important;
+}
+div:not(.pzp-pc--adbreak)>.pzp-pc__video{
+	pointer-events: none !important;
+}
+[aria-label="넓은 화면"]>.pzp-pc-ui-button__tooltip,
+[aria-label="좁은 화면"]>.pzp-pc-ui-button__tooltip{font-size:0 !important;}
+[aria-label="넓은 화면"]>.pzp-pc-ui-button__tooltip:after{content:'극장모드' !important; display:span !important; font-size:13px !important; }
+[aria-label="좁은 화면"]>.pzp-pc-ui-button__tooltip:after{content:'극장모드 종료' !important; display:span !important; font-size:13px !important; }
+[class*="button_container__"][class*="button_medium__"]{
+	border-radius: 4px !important;
+}
+
+[class*="live_information_details__"]{
+	border-top:1px solid rgba(83,83,95,.48) !important;
+}
+[class*="live_chatting_container__"]:before{
+	background-color:rgba(83,83,95,.48) !important;
+}
+[class*="live_chatting_message_wrapper__"] [class*="name_text__"]:after{content:':' !important; display:span !important; font-size:13px !important; color:#efeff1 !important;margin-left:1px}
+#navigation>[class*="navigator_wrapper__"]{
+	padding: 10px 8px !important;
+}
+
+*{
+	font-family:"Inter","Roobert","Helvetica Neue",Helvetica,Arial,sans-serif !important;
+}
