@@ -116,9 +116,9 @@ body,
 	color:#efeff1 !important;
 	font-weight:bold !important;
 }
-div:not(.pzp-pc--adbreak)>.pzp-pc__video{
+/* div:not(.pzp-pc--adbreak)>.pzp-pc__video{
 	pointer-events: none !important;
-}
+} */
 [aria-label="넓은 화면"]>.pzp-pc-ui-button__tooltip,
 [aria-label="좁은 화면"]>.pzp-pc-ui-button__tooltip{font-size:0 !important;}
 [aria-label="넓은 화면"]>.pzp-pc-ui-button__tooltip:after{content:'극장모드' !important; display:span !important; font-size:13px !important; }
@@ -133,7 +133,8 @@ div:not(.pzp-pc--adbreak)>.pzp-pc__video{
 [class*="live_chatting_container__"]:before{
 	background-color:rgba(83,83,95,.48) !important;
 }
-[class*="live_chatting_message_wrapper__"] [class*="name_text__"]:after{content:':' !important; display:span !important; font-size:13px !important; color:#efeff1 !important;margin-left:1px}
+[class*="live_chatting_message_wrapper__"] [class*="name_text__"]{filter: saturate(1.8) !important; font-weight:bold !important;}
+[class*="live_chatting_message_wrapper__"] [class*="name_text__"]:after{content:':' !important; display:span !important; font-size:13px !important; color:#efeff1 !important; margin-left:1px}
 #navigation>[class*="navigator_wrapper__"]{
 	padding: 10px 8px !important;
 }
@@ -141,3 +142,28 @@ div:not(.pzp-pc--adbreak)>.pzp-pc__video{
 *{
 	font-family:"Inter","Roobert","Helvetica Neue",Helvetica,Arial,sans-serif !important;
 }
+
+
+#live_player_layout{}
+#live_player_layout.playable{}
+#live_player_layout.playable .webplayer-internal-video{cursor:pointer;}
+
+
+
+#live_player_layout .tzzk__timer{
+	display:inline-flex;
+	align-items:center;
+	opacity:0;
+	-webkit-transition-duration: .2s;
+	transition-duration: .2s;
+	-webkit-transition-property: opacity;
+	transition-property: opacity;
+	margin-left:10px;
+}
+#live_player_layout .tzzk__timer.tzzk__timer--live:before{ content:'실시간'; display:span; font-size:13px; color:#fff; font-weight:bold;}
+#live_player_layout .tzzk__timer.tzzk__timer--live:after{ content:""; display: inline-block; width: 8px; height: 8px; background-color: #ff0000; border-radius: 50%; margin-left: 5px; margin-top:3px;}
+#live_player_layout .tzzk__timer:not(.tzzk__timer--live){ cursor:pointer; }
+#live_player_layout .pzp-pc.pzp-pc--controls .tzzk__timer{
+	opacity:1;
+}
+#live_player_layout .pzp-pc__live-time{display:none;}
