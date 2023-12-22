@@ -5,6 +5,13 @@
 // `<svg width="30" height="30" version="1.1" viewBox="-2 -2 24 24" fill="#f1f1f1" x="0px" y="0px" aria-hidden="true" focusable="false"><path fill-rule="evenodd" clip-rule="evenodd" d="M3 12l7-10 7 10-7 6-7-6zm2.678-.338L10 5.487l4.322 6.173-.85.728L10 11l-3.473 1.39-.849-.729z"></path></svg>`
 
 (function(){
+	const formatComma = (num)=>num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+	const formatViewerCount = (count)=>{
+		if(count >= 10000)
+			return `${(count/10000).toFixed(1)}만`;
+		else
+			return formatComma(count);
+	}
 	// const setChatColor = ($list)=>{
 	// 	$list.forEach($el=>{
 	// 		if($el.className.includes("donation")){
@@ -56,6 +63,70 @@
 	bodyObserver.observe($layoutBody, {childList: true});
 	updateStatus();
 
+	class ChannelApi{
+		static CHANNEL_DETAIL_URL = "https://api.chzzk.naver.com/service/v1/channels/{channelId}/live-detail";
+
+		constructor(){
+			this._cache = {};
+		}
+		getDetail(channelId){
+			return new Promise((resolve, reject)=>{
+				if(this._cache[channelId]){
+					resolve(this._cache[channelId]);
+					return;
+				}
+				fetch(ChannelApi.CHANNEL_DETAIL_URL.replace("{channelId}", channelId), {
+					headers: {
+						"Accept": "application/json, text/plain, */*",
+					}
+				}).then(res=>res.json()).then(res=>{
+					this._cache[channelId] = res;
+					resolve(res);
+				}).catch(reject);
+			});
+		}
+		getViewerCount(channelId){
+			return this.getDetail(channelId).then(res=>res.content.concurrentUserCount);
+		}
+		getCategory(channelId){
+			return this.getDetail(channelId).then(res=>res.content.channel.liveCategoryValue);
+		}
+	}
+
+	const api = new ChannelApi();
+
+
+	const $aside = document.querySelector("#navigation");
+	const initNavWrap = ($navWrap)=>{
+		const $navList = $navWrap.querySelector('[class^="navigator_list__"]');
+		
+		const initNavList = ($items)=>{
+			$items = $items.filter($e=>$e.className.startsWith("navigator_item__")&&!$e.classList.contains("tzzk__counter--active"));
+			const initItem = ($item)=>{
+				const _href_split = $item.href.split("/live/");
+				if(_href_split.length !== 2) return;
+				const channelId = _href_split[1];
+				if(!(/^[0-9a-f]{32}$/.test(channelId))) return;
+
+				$item.classList.add("tzzk__counter--active");
+				api.getViewerCount(channelId).then(count=>{
+					const $counter = document.createElement("span");
+					$counter.className = "tzzk__counter";
+					$counter.innerText = formatViewerCount(count);
+					$item.appendChild($counter);
+				});
+			}
+			$items.forEach(initItem);
+		}
+		
+		const navObserver = new MutationObserver(mutations=>{mutations.forEach(mutation=>initNavList([...mutation.addedNodes]))});
+		navObserver.observe($navList, {childList: true});
+		initNavList([...$navList.children]);
+	}
+
+	const asideObserver = new MutationObserver(mutations=>{mutations.forEach(mutation=>{[...mutation.addedNodes].filter($e=>$e.className.startsWith("navigator_wrapper__")).map($e=>initNavWrap($e))})});
+	asideObserver.observe($aside, {childList: true});
+	
 
 	function initPlayerPauser(){
 		const $playerWrap = document.getElementById("live_player_layout");

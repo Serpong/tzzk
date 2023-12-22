@@ -1,3 +1,4 @@
+/* @import url('https://fonts.googleapis.com/css2?family=Inter&display=swap'); */
 :root{
 	--color-twitch-1: #9147ffe6;
 	--color-twitch-2: #5c16c5;
@@ -9,6 +10,11 @@
 	--color-dark-is-not-black1: #18181b;
 	--color-dark-is-not-black2: #1f1f23;
 }
+
+*{
+	font-family:"Inter","Roobert","Helvetica Neue",Helvetica,Arial,sans-serif !important;
+}
+
 [class*="popup_button__"][class*="popup_is_highlight__"],
 [class*="live_chatting_input_send_button__"][class*="live_chatting_input_is_active__"],
 [aria-pressed=true],
@@ -138,10 +144,10 @@ body,
 #navigation>[class*="navigator_wrapper__"]{
 	padding: 10px 8px !important;
 }
-
-*{
-	font-family:"Inter","Roobert","Helvetica Neue",Helvetica,Arial,sans-serif !important;
+[class^="navigator_status__"]{
+	display:none !important;
 }
+
 
 
 #live_player_layout{}
@@ -167,3 +173,20 @@ body,
 	opacity:1;
 }
 #live_player_layout .pzp-pc__live-time{display:none;}
+
+.tzzk__counter{
+	display:inline-flex;
+	align-items:center;
+	color:#dedee3 !important;
+	font-size:13px;
+	padding-left: 10px;
+}
+.tzzk__counter:before{
+	content:"";
+	display:inline-block;
+	width:8px;
+	height:8px;
+	background-color:#eb0400;
+	border-radius:50%;
+	margin-right:5px;
+}
