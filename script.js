@@ -63,7 +63,7 @@
 	bodyObserver.observe($layoutBody, {childList: true});
 	updateStatus();
 
-	class ChannelApi{
+	class ChannelAPI{
 		static CHANNEL_DETAIL_URL = "https://api.chzzk.naver.com/service/v1/channels/{channelId}/live-detail";
 
 		constructor(){
@@ -75,7 +75,7 @@
 					resolve(this._cache[channelId]);
 					return;
 				}
-				fetch(ChannelApi.CHANNEL_DETAIL_URL.replace("{channelId}", channelId), {
+				fetch(ChannelAPI.CHANNEL_DETAIL_URL.replace("{channelId}", channelId), {
 					headers: {
 						"Accept": "application/json, text/plain, */*",
 					}
@@ -91,9 +91,36 @@
 		getCategory(channelId){
 			return this.getDetail(channelId).then(res=>res.content.liveCategoryValue);
 		}
+		getTitle(channelId){
+			return this.getDetail(channelId).then(res=>res.content.liveTitle);
+		}
 	}
 
-	const api = new ChannelApi();
+	const channelAPI = new ChannelAPI();
+
+
+	const {setTitleElement} = (function addTitle(){
+		const $title = document.createElement("div");
+		const $inner = document.createElement("div");
+		$inner.className = "inner";
+		$title.appendChild($inner);
+		$title.className = "tzzk__navItem-title";
+		document.body.appendChild($title);
+
+		const setTitleElement = ($item, title)=>{
+			$item.addEventListener("mouseenter", ()=>{
+				$title.classList.add("tzzk__navItem-title--active");
+				$inner.innerText = title;
+				$title.style.left = `${$item.getBoundingClientRect().right}px`;
+				$title.style.top = `${$item.getBoundingClientRect().top}px`;
+			});
+			$item.addEventListener("mouseleave", ()=>{
+				$title.classList.remove("tzzk__navItem-title--active");
+			});
+		}
+
+		return {setTitleElement};
+	})();
 
 	function initAside(){
 		const $aside = document.getElementById("navigation");
@@ -127,7 +154,7 @@
 						const $category = document.createElement("span");
 						$category.className = "tzzk__category";
 						$navNameWrap.appendChild($category);
-						api.getCategory(channelId).then(category=>{
+						channelAPI.getCategory(channelId).then(category=>{
 							if(category == "talk")
 								category = "Just Chatting";
 							$category.innerText = category;
@@ -136,9 +163,15 @@
 	
 						$counter.classList.add("tzzk__counter--active");
 						
-						api.getViewerCount(channelId).then(count=>{
+						channelAPI.getViewerCount(channelId).then(count=>{
 							$counter.innerText = formatViewerCount(count);
 						});
+
+						
+						channelAPI.getTitle(channelId).then(title=>{
+							setTitleElement($item, title);
+						});
+
 					}
 				}
 				$items.forEach(initItem);

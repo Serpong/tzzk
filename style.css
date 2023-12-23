@@ -203,8 +203,39 @@ body{
 #live_player_layout .pzp-pc__live-time{display:none;}
 
 .tzzk__navItem{
+	position:relative;
 	margin-top: 2px !important;
 }
+.tzzk__navItem-title{
+	position:absolute;
+	z-index: 9999;
+	background-color: var(--color-dark-is-not-black2);
+	font-size:13px;
+	padding: 5px;
+	border-radius: 6px;
+	box-shadow: 0 4px 8px rgba(0,0,0,.4),0 0px 4px rgba(0,0,0,.4);
+	margin-left:15px;
+	opacity:1;
+	transition: opacity .2s ease-in-out;
+}
+.tzzk__navItem-title:not(.tzzk__navItem-title--active){
+	/* display:none; */
+	left: -1000px !important;
+	opacity:0;
+}
+.tzzk__navItem-title>.inner{
+	display: -webkit-box;
+	-webkit-line-clamp: 2;
+	-webkit-box-orient: vertical;
+	width:190px;
+	color:#efeff1;
+	overflow: hidden !important;
+	text-overflow: ellipsis !important;
+	white-space: normal !important;
+	padding:0 5px;
+	line-height: 1.5;
+}
+
 .tzzk__navItem [class*="navigator_name__"]{
 	display:flex;
 	flex-direction:column;
@@ -243,5 +274,5 @@ body{
 
 .tzzk__counter.tzzk__counter--offline{
 	color:#dedee3 !important;
+	align-self: center;
 }
-
