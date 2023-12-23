@@ -1,7 +1,7 @@
 {
 	"name": "트지직 - 트수 이주 환경 적응 지원 서비스",
 	"description": "트수들의 치지직 환경으로의 이주와 적응을 도와주는, 맞춤형 디지털 이주 지원 확장프로그램",
-	"version": "1.3",
+	"version": "1.3.2",
 	"manifest_version": 3,
 	"action": {
 		"default_icon": {

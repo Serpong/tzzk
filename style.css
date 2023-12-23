@@ -150,6 +150,9 @@ body{
 #navigation>[class*="navigator_wrapper__"]{
 	padding: 10px 8px !important;
 }
+#navigation:not([class^="navigator_is_expanded__"]) .tzzk__counter{
+	display:none;
+}
 [class^="navigator_status__"]{
 	display:none !important;
 }
@@ -180,11 +183,11 @@ body{
 }
 #live_player_layout .pzp-pc__live-time{display:none;}
 
-.tzzk__navNameWrap{
+.tzzk__navItem [class*="navigator_name__"]{
 	display:flex;
 	flex-direction:column;
 }
-.tzzk__navNameWrap>.tzzk__category{
+.tzzk__navItem [class*="navigator_name__"] .tzzk__category{
 	color:#adadb8;
 	font-size:13px;
 	overflow: hidden;

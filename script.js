@@ -95,15 +95,18 @@
 
 	const api = new ChannelApi();
 
-	(function initAside(){
-		const $aside = document.querySelector("#navigation");
+	function initAside(){
+		const $aside = document.getElementById("navigation");
+		if(!$aside || $aside.classList.contains("tzzk--active")) return;
+		$aside.classList.add("tzzk--active");
+
 		const initNavWrap = ($navWrap)=>{
 			const $navList = $navWrap.querySelector('[class^="navigator_list__"]');
 			
 			const initNavList = ($items)=>{
-				$items = $items.filter($e=>$e.className.startsWith("navigator_item__")&&!$e.classList.contains("tzzk__counterWrapper"));
+				$items = $items.filter($e=>$e.className.startsWith("navigator_item__")&&!$e.classList.contains("tzzk__navItem"));
 				const initItem = ($item)=>{
-					$item.classList.add("tzzk__counterWrapper");
+					$item.classList.add("tzzk__navItem");
 					const $counter = document.createElement("span");
 					$counter.className = "tzzk__counter";
 					$item.appendChild($counter);
@@ -118,7 +121,7 @@
 						if(!(/^[0-9a-f]{32}$/.test(channelId))) return;
 						// set navNameWrap
 						const $navNameWrap = $item.querySelector('[class^="navigator_name__"]');
-						$navNameWrap.classList.add("tzzk__navNameWrap");
+						// $navNameWrap.classList.add("tzzk__navNameWrap");
 	
 						// add category
 						const $category = document.createElement("span");
@@ -152,7 +155,13 @@
 		const asideObserver = new MutationObserver(mutations=>{mutations.forEach(mutation=>_initNavWrap([...mutation.addedNodes]))});
 		_initNavWrap([...$aside.children]);
 		asideObserver.observe($aside, {childList: true});
-	})();
+	}
+
+	const $layoutWrap = document.querySelector("[class^='layout_wrap__']");
+	const layoutWrapObserver = new MutationObserver(initAside);
+	initAside();
+	layoutWrapObserver.observe($layoutWrap, {childList: true});
+
 
 	function initPlayerFeatures(){
 		const $playerWrap = document.getElementById("live_player_layout");
@@ -199,7 +208,7 @@
 						$timer.innerText = "";
 					}
 				}
-				prevDiff = diff;
+				// prevDiff = diff;
 			}
 
 			return { updateTimer }
