@@ -4,6 +4,7 @@
 // });
 // `<svg width="30" height="30" version="1.1" viewBox="-2 -2 24 24" fill="#f1f1f1" x="0px" y="0px" aria-hidden="true" focusable="false"><path fill-rule="evenodd" clip-rule="evenodd" d="M3 12l7-10 7 10-7 6-7-6zm2.678-.338L10 5.487l4.322 6.173-.85.728L10 11l-3.473 1.39-.849-.729z"></path></svg>`
 
+
 (function(){
 	const formatComma = (num)=>num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 	const formatViewerCount = (count)=>{
@@ -12,24 +13,14 @@
 		else
 			return formatComma(count);
 	}
-	// const setChatColor = ($list)=>{
-	// 	$list.forEach($el=>{
-	// 		if($el.className.includes("donation")){
-
-	// 		}
-	// 		else{
-	// 			const $name = $el.querySelector('[class^="live_chatting_username_nickname__"]');
-	// 			if(!$name) return;
-	// 			$name.style.color = `hsl(${generateColor($name.innerText)}, 100%, 71%)`;
-	// 		}
-	// 	})
-	// }
-	
 
 	const $layoutBody = document.getElementById("layout-body");
+	if(!$layoutBody) return;
 
 	let status = "none";
 	let $container = null;
+
+	
 
 	const parseCurrentContainer = ()=>{
 		const $childList = [].concat.apply([], [...$layoutBody.children]);
@@ -99,6 +90,46 @@
 	const channelAPI = new ChannelAPI();
 
 
+
+
+
+
+
+
+
+
+
+	const urlBtnOpenPopupChat = `https://chzzk.naver.com/favicon.ico?tzzkPopupChatChannelId={channelId}`;
+	const htmlBtnOpenPopupChat = `<a href="" target="_blank" class="tzzk__chatList_btnOpenPopupChat"><svg width="20" height="20" viewBox="0 0 20 20"><path d="M12 4h2.586L9.293 9.293l1.414 1.414L16 5.414V8h2V2h-6v2z"></path><path d="M4 4h6v2H4v10h10v-6h2v6a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2z"></path></svg><span>채팅창 팝업</span></a>`;
+	const $htmlBtnOpenPopupChat = document.createElement("div");
+	$htmlBtnOpenPopupChat.innerHTML = htmlBtnOpenPopupChat;
+
+	const initChatMenuLayer = ($chatMenuWrap)=>{	
+		const $chatMenuLayer = $chatMenuWrap.querySelector('[class^="layer_container__"]');
+		if(!$chatMenuLayer) return;
+
+		const $a = $htmlBtnOpenPopupChat.querySelector("a").cloneNode(true);
+		const channelId = location.pathname.split("/")[2];
+		if(!(/^[0-9a-f]{32}$/.test(channelId))) {console.error("channelId Error"); return;}
+
+		$a.href = urlBtnOpenPopupChat.replace("{channelId}", channelId);
+		$chatMenuLayer.appendChild($a);
+		
+	}
+	
+	const initChatMenuWrap = ()=>{
+		
+		const $chatMenuWrap = document.querySelector('[class*="live_chatting_header_menu__"]');
+		if(!$chatMenuWrap) return;
+		const chatMenuObserver = new MutationObserver(mutations=>initChatMenuLayer($chatMenuWrap));
+		chatMenuObserver.observe($chatMenuWrap, {childList: true});
+	}
+
+
+
+
+
+
 	const {setTitleElement} = (function addTitle(){
 		const $title = document.createElement("div");
 		const $inner = document.createElement("div");
@@ -148,6 +179,7 @@
 						if(!(/^[0-9a-f]{32}$/.test(channelId))) return;
 						// set navNameWrap
 						const $navNameWrap = $item.querySelector('[class^="navigator_name__"]');
+						if(!$navNameWrap) return;
 						// $navNameWrap.classList.add("tzzk__navNameWrap");
 	
 						// add category
@@ -191,8 +223,12 @@
 	}
 
 	const $layoutWrap = document.querySelector("[class^='layout_wrap__']");
-	const layoutWrapObserver = new MutationObserver(initAside);
+	const layoutWrapObserver = new MutationObserver(()=>{
+		initAside();
+		initChatMenuWrap();// TODO refactor
+	});
 	initAside();
+	initChatMenuWrap();
 	layoutWrapObserver.observe($layoutWrap, {childList: true});
 
 
@@ -290,3 +326,108 @@
 	}
 
 })();
+
+
+(async function initPopupChat(){
+
+	const cache360 = {};
+	const generate360 = (s)=>{
+		if(cache360[s]) return cache360[s];
+		let hash = 0;
+		const len = Math.min(s.length, 10);
+		for (let i = 0; i < len; i++) {
+			hash = (hash + s.charCodeAt(i)) % 360;
+		}
+		cache360[s] = hash;
+		return hash;
+	}
+
+
+	if(location.pathname != "/favicon.ico") return;
+
+	const urlParams = new URLSearchParams(location.search);
+	const channelId = urlParams.get("tzzkPopupChatChannelId");
+	if(!channelId || channelId.length!=32) return;
+
+	const chatChannelId = (await (await fetch("https://api.chzzk.naver.com/service/v1/channels/{channelId}/live-detail".replace("{channelId}", channelId))).json()).content.chatChannelId;	
+	const chatToken = (await (await fetch("https://comm-api.game.naver.com/nng_main/v1/chats/access-token?channelId={chatChannelId}&chatType=STREAMING".replace("{chatChannelId}", chatChannelId))).json()).content.accessToken;
+
+	const listenChatData = (chatChannelId, chatToken, callback)=>{
+		const socket = new WebSocket("wss://kr-ss4.chat.naver.com/chat");
+	
+		socket.addEventListener("open", function (event) {
+			socket.send(`{"ver":"2","cmd":100,"svcid":"game","cid":"${chatChannelId}","bdy":{"uid":null,"devType":2001,"accTkn":"${chatToken}","auth":"READ"},"tid":1}`);
+		});
+		socket.addEventListener("message", function (event) {
+			let data = null;
+			try{ data = JSON.parse(event.data); }
+			catch(e){console.error("tzzk", e); return;}
+			if (!data) return;
+			if (data.cmd === 0){
+				socket.send(`{"ver":"2","cmd":10000}`);
+				return;
+			}
+			if(data.cmd !== 93101 || !data.bdy.length) return;
+
+			data.bdy.forEach(callback);
+		});
+	}
+
+
+	console.log(chatChannelId);
+	console.log(chatToken);
+
+	const { addChat } = (function initUI(){
+		document.documentElement.innerHTML = '';
+		document.documentElement.className = "tzzkChat__html";
+		const $popupWrap = document.createElement("div");
+		$popupWrap.id = "tzzkChat__root";
+		document.body.appendChild($popupWrap);
+
+		const $chatList = document.createElement("div");
+		$chatList.className = "tzzkChat__list";
+		$popupWrap.appendChild($chatList);
+
+
+
+		const addChat = (nick, msg, badgeImgs=[])=>{
+			let $badge = null;
+			if(badgeImgs.length){
+				$badge = document.createElement("img");
+				$badge.className = "tzzkChat__badge";
+				$badge.src = badgeImgs[0];
+			}
+
+			const $chat = document.createElement("div");
+			$chat.className = "tzzkChat__item";
+
+			if($badge) $chat.appendChild($badge);
+
+			const $nick = document.createElement("span");
+			$nick.className = "tzzkChat__nick";
+			$nick.innerText = nick;
+			$nick.style.color = `hsl(${generate360(nick)}, 100%, 71%)`;
+			
+			$chat.appendChild($nick);
+
+			const $msg = document.createElement("span");
+			$msg.className = "tzzkChat__msg";
+			$msg.innerText = msg;
+			$chat.appendChild($msg);
+
+			$chatList.appendChild($chat);
+		}
+		
+		return {addChat}
+	})();
+
+	listenChatData(chatChannelId, chatToken, (data)=>{
+		let profile = null;
+		try{ profile = JSON.parse(data.profile); }
+		catch(e){console.error("tzzk", e); return;}
+		addChat(profile?.nickname, data.msg, (profile?.activityBadges || []).map(badge=>badge.imageUrl))
+	});
+	
+
+})();
+
