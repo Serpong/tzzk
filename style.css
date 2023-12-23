@@ -7,6 +7,7 @@
 	--color-twitch-5: #a000ff;
 	--color-twitch-6: #5c0280;
 	--color-twitch-7: #9147ff;
+	--color-dark-is-not-black0: #0e0e10;
 	--color-dark-is-not-black1: #18181b;
 	--color-dark-is-not-black2: #1f1f23;
 }
@@ -99,7 +100,9 @@ input:checked+[class*="subscription_cycle_button__"],
 [class*="live_chatting_message_wrapper__"]{
 	width:100% !important;
 }
-body,
+body{
+	background-color: var(--color-dark-is-not-black0) !important;
+}
 [class*="header_area__"]{
 	background-color: var(--color-dark-is-not-black1) !important;
 }
@@ -136,11 +139,14 @@ body,
 [class*="live_information_details__"]{
 	border-top:1px solid rgba(83,83,95,.48) !important;
 }
+[class*="live_chatting_container__"]{
+	background-color:var(--color-dark-is-not-black1) !important;
+}
 [class*="live_chatting_container__"]:before{
 	background-color:rgba(83,83,95,.48) !important;
 }
-[class*="live_chatting_message_wrapper__"] [class*="name_text__"]{filter: saturate(1.8) !important; font-weight:bold !important;}
-[class*="live_chatting_message_wrapper__"] [class*="name_text__"]:after{content:':' !important; display:span !important; font-size:13px !important; color:#efeff1 !important; margin-left:1px}
+[class*="live_chatting_message_wrapper__"] [class*="name_text__"]{filter: saturate(2.2) !important; font-weight:bold !important;}
+[class*="live_chatting_message_wrapper__"] [class*="name_text__"]:after{content:':' !important; display:span !important; font-size:13px !important; color:#efeff1 !important; margin-left:1px; font-weight:normal !important;}
 #navigation>[class*="navigator_wrapper__"]{
 	padding: 10px 8px !important;
 }
@@ -167,21 +173,34 @@ body,
 	margin-left:10px;
 }
 #live_player_layout .tzzk__timer.tzzk__timer--live:before{ content:'실시간'; display:span; font-size:13px; color:#fff; font-weight:bold;}
-#live_player_layout .tzzk__timer.tzzk__timer--live:after{ content:""; display: inline-block; width: 8px; height: 8px; background-color: #ff0000; border-radius: 50%; margin-left: 5px; margin-top:3px;}
+#live_player_layout .tzzk__timer.tzzk__timer--live:after{ content:""; display: inline-block; width: 8px; height: 8px; background-color: #ff0000; border-radius: 50%; margin-left: 6px; margin-top:2px;}
 #live_player_layout .tzzk__timer:not(.tzzk__timer--live){ cursor:pointer; }
 #live_player_layout .pzp-pc.pzp-pc--controls .tzzk__timer{
 	opacity:1;
 }
 #live_player_layout .pzp-pc__live-time{display:none;}
 
-.tzzk__counter{
+.tzzk__navNameWrap{
+	display:flex;
+	flex-direction:column;
+}
+.tzzk__navNameWrap>.tzzk__category{
+	color:#adadb8;
+	font-size:13px;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	margin-top:2px;
+}
+
+.tzzk__counter {
 	display:inline-flex;
 	align-items:center;
 	color:#dedee3 !important;
 	font-size:13px;
 	padding-left: 10px;
 }
-.tzzk__counter:before{
+.tzzk__counter.tzzk__counter--active:before{
 	content:"";
 	display:inline-block;
 	width:8px;
@@ -190,3 +209,8 @@ body,
 	border-radius:50%;
 	margin-right:5px;
 }
+
+.tzzk__counter.tzzk__counter--offline{
+	color:#dedee3 !important;
+}
+

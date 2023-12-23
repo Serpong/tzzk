@@ -50,7 +50,7 @@
 	const onStatusChange = (prevStatus)=>{
 		// console.log(prevStatus, status);
 		if(prevStatus !== "live" && status === "live"){
-			initPlayerPauser();
+			initPlayerFeatures();
 		}
 	}
 	const updateStatus = ()=>{
@@ -89,52 +89,78 @@
 			return this.getDetail(channelId).then(res=>res.content.concurrentUserCount);
 		}
 		getCategory(channelId){
-			return this.getDetail(channelId).then(res=>res.content.channel.liveCategoryValue);
+			return this.getDetail(channelId).then(res=>res.content.liveCategoryValue);
 		}
 	}
 
 	const api = new ChannelApi();
 
-
-	const $aside = document.querySelector("#navigation");
-	const initNavWrap = ($navWrap)=>{
-		const $navList = $navWrap.querySelector('[class^="navigator_list__"]');
-		
-		const initNavList = ($items)=>{
-			$items = $items.filter($e=>$e.className.startsWith("navigator_item__")&&!$e.classList.contains("tzzk__counter--active"));
-			const initItem = ($item)=>{
-				const _href_split = $item.href.split("/live/");
-				if(_href_split.length !== 2) return;
-				const channelId = _href_split[1];
-				if(!(/^[0-9a-f]{32}$/.test(channelId))) return;
-
-				$item.classList.add("tzzk__counter--active");
-				api.getViewerCount(channelId).then(count=>{
+	(function initAside(){
+		const $aside = document.querySelector("#navigation");
+		const initNavWrap = ($navWrap)=>{
+			const $navList = $navWrap.querySelector('[class^="navigator_list__"]');
+			
+			const initNavList = ($items)=>{
+				$items = $items.filter($e=>$e.className.startsWith("navigator_item__")&&!$e.classList.contains("tzzk__counterWrapper"));
+				const initItem = ($item)=>{
+					$item.classList.add("tzzk__counterWrapper");
 					const $counter = document.createElement("span");
 					$counter.className = "tzzk__counter";
-					$counter.innerText = formatViewerCount(count);
 					$item.appendChild($counter);
-				});
-			}
-			$items.forEach(initItem);
-		}
-		
-		const navObserver = new MutationObserver(mutations=>{mutations.forEach(mutation=>initNavList([...mutation.addedNodes]))});
-		navObserver.observe($navList, {childList: true});
-		initNavList([...$navList.children]);
-	}
-
-	const asideObserver = new MutationObserver(mutations=>{mutations.forEach(mutation=>{[...mutation.addedNodes].filter($e=>$e.className.startsWith("navigator_wrapper__")).map($e=>initNavWrap($e))})});
-	asideObserver.observe($aside, {childList: true});
 	
+					const _href_split = $item.href.split("/live/");
+					if(_href_split.length !== 2){ //offline
+						$counter.classList.add("tzzk__counter--offline");
+						$counter.innerText = "오프라인";
+					}
+					else{ // live
+						const channelId = _href_split[1];
+						if(!(/^[0-9a-f]{32}$/.test(channelId))) return;
+						// set navNameWrap
+						const $navNameWrap = $item.querySelector('[class^="navigator_name__"]');
+						$navNameWrap.classList.add("tzzk__navNameWrap");
+	
+						// add category
+						const $category = document.createElement("span");
+						$category.className = "tzzk__category";
+						$navNameWrap.appendChild($category);
+						api.getCategory(channelId).then(category=>{
+							if(category == "talk")
+								category = "Just Chatting";
+							$category.innerText = category;
+						});
+	
+	
+						$counter.classList.add("tzzk__counter--active");
+						
+						api.getViewerCount(channelId).then(count=>{
+							$counter.innerText = formatViewerCount(count);
+						});
+					}
+				}
+				$items.forEach(initItem);
+			}
+			
+			const navObserver = new MutationObserver(mutations=>{mutations.forEach(mutation=>initNavList([...mutation.addedNodes]))});
+			initNavList([...$navList.children]);
+			navObserver.observe($navList, {childList: true});
+		}
+	
+		const _initNavWrap = ($navWrapList)=>{
+			$navWrapList.filter($e=>$e.className.startsWith("navigator_wrapper__")).forEach($e=>initNavWrap($e))
+		}
+		const asideObserver = new MutationObserver(mutations=>{mutations.forEach(mutation=>_initNavWrap([...mutation.addedNodes]))});
+		_initNavWrap([...$aside.children]);
+		asideObserver.observe($aside, {childList: true});
+	})();
 
-	function initPlayerPauser(){
+	function initPlayerFeatures(){
 		const $playerWrap = document.getElementById("live_player_layout");
 		if (!$playerWrap){
 			const playerObserver = new MutationObserver(()=>{
 				if(document.getElementById("live_player_layout")){
 					playerObserver.disconnect();
-					initPlayerPauser();
+					initPlayerFeatures();
 				}
 			});
 			playerObserver.observe($container, {childList: true, subtree: true});
