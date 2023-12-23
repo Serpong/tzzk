@@ -1,4 +1,12 @@
 /* @import url('https://fonts.googleapis.com/css2?family=Inter&display=swap'); */
+@font-face {
+	font-family: 'Inter';
+	font-style: normal;
+	font-weight: 400;
+	font-display: swap;
+	src: url(https://fonts.gstatic.com/s/inter/v13/UcCO3FwrK3iLTeHuS_fvQtMwCp50KnMw2boKoduKmMEVuLyfAZ9hiA.woff2) format('woff2');
+	unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+  }
 :root{
 	--color-twitch-1: #9147ffe6;
 	--color-twitch-2: #5c16c5;
@@ -51,7 +59,6 @@ input:checked+[class*="manage_cycle_button__"],
 input:checked+[class*="subscription_cycle_button__"], 
 [class*="channel_profile_thumbnail__"][class*="channel_profile_is_live__"], 
 [class*="recommend_live_profile__"], 
-[class*="navigator_profile__"][class*="navigator_is_live__"], 
 [class*="toolbar_profile__"]:active,[class*="toolbar_profile__"]:focus-visible,[class*="toolbar_profile__"]:hover, 
 [class*="video_information_thumbnail__"][class*="video_information_is_live__"], 
 [class*="live_information_player_profile__"], 
@@ -96,6 +103,7 @@ input:checked+[class*="subscription_cycle_button__"],
 
 [class*="toolbar_container__"]{
 	background-color: var(--color-dark-is-not-black1) !important;
+	box-shadow: 0 1px 2px rgba(0,0,0,.9), 0 0px 2px rgba(0,0,0,.9);
 }
 [class*="live_chatting_message_wrapper__"]{
 	width:100% !important;
@@ -117,9 +125,6 @@ body{
 	color:#dedee3 !important;
 	font-weight:bold !important;
 }
-[class*="navigator_image__"]{
-	width:30px !important;height:30px !important;
-}
 [class*="navigator_title__"]{
 	font-size:14px !important;
 	color:#efeff1 !important;
@@ -136,6 +141,9 @@ body{
 	border-radius: 4px !important;
 }
 
+[class*="search_form__"]{
+	border-radius: 6px !important;
+}
 [class*="live_information_details__"]{
 	border-top:1px solid rgba(83,83,95,.48) !important;
 }
@@ -148,7 +156,10 @@ body{
 [class*="live_chatting_message_wrapper__"] [class*="name_text__"]{filter: saturate(2.2) !important; font-weight:bold !important;}
 [class*="live_chatting_message_wrapper__"] [class*="name_text__"]:after{content:':' !important; display:span !important; font-size:13px !important; color:#efeff1 !important; margin-left:1px; font-weight:normal !important;}
 #navigation>[class*="navigator_wrapper__"]{
-	padding: 10px 8px !important;
+	padding: 10px 3px 10px 5px !important;
+}
+#navigation>[class*="navigator_wrapper__"]:before{
+	display:none !important;
 }
 #navigation:not([class^="navigator_is_expanded__"]) .tzzk__counter{
 	display:none;
@@ -157,6 +168,14 @@ body{
 	display:none !important;
 }
 
+[class*="navigator_profile__"][class*="navigator_is_live__"]{
+	border: none !important;
+	background:none !important;
+}
+[class*="navigator_image__"]{
+	width:30px !important;height:30px !important;
+	margin:0 !important;
+}
 
 
 #live_player_layout{}
@@ -183,9 +202,16 @@ body{
 }
 #live_player_layout .pzp-pc__live-time{display:none;}
 
+.tzzk__navItem{
+	margin-top: 2px !important;
+}
 .tzzk__navItem [class*="navigator_name__"]{
 	display:flex;
 	flex-direction:column;
+	margin-left: 10px !important;
+}
+.tzzk__navItem [class*="navigator_name__"]>[class*="name_ellipsis__"]{
+	line-height:1;
 }
 .tzzk__navItem [class*="navigator_name__"] .tzzk__category{
 	color:#adadb8;
@@ -193,11 +219,13 @@ body{
 	overflow: hidden;
 	text-overflow: ellipsis;
 	white-space: nowrap;
-	margin-top:2px;
+	margin-top:1px;
+	margin-bottom:1px;
 }
 
 .tzzk__counter {
 	display:inline-flex;
+	align-self: start;
 	align-items:center;
 	color:#dedee3 !important;
 	font-size:13px;
