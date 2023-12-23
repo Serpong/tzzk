@@ -416,6 +416,7 @@
 			$chat.appendChild($msg);
 
 			$chatList.appendChild($chat);
+			$chatList.scrollBy(0, 10000);
 		}
 		
 		return {addChat}
