@@ -100,13 +100,14 @@
 
 
 	const urlBtnOpenPopupChat = `https://chzzk.naver.com/favicon.ico?tzzkPopupChatChannelId={channelId}`;
-	const htmlBtnOpenPopupChat = `<a href="" target="_blank" class="tzzk__chatList_btnOpenPopupChat"><svg width="20" height="20" viewBox="0 0 20 20"><path d="M12 4h2.586L9.293 9.293l1.414 1.414L16 5.414V8h2V2h-6v2z"></path><path d="M4 4h6v2H4v10h10v-6h2v6a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2z"></path></svg><span>채팅창 팝업</span></a>`;
+	const htmlBtnOpenPopupChat = `<a href="" target="_blank" class="tzzk__chatList_btnOpenPopupChat"><svg width="20" height="20" viewBox="0 0 20 20"><path d="M12 4h2.586L9.293 9.293l1.414 1.414L16 5.414V8h2V2h-6v2z"></path><path d="M4 4h6v2H4v10h10v-6h2v6a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2z"></path></svg><span>채팅 팝업(심플)</span></a>`;
 	const $htmlBtnOpenPopupChat = document.createElement("div");
 	$htmlBtnOpenPopupChat.innerHTML = htmlBtnOpenPopupChat;
 
-	const initChatMenuLayer = ($chatMenuWrap)=>{	
+	const initChatMenuLayer = ($chatMenuWrap)=>{
 		const $chatMenuLayer = $chatMenuWrap.querySelector('[class^="layer_container__"]');
 		if(!$chatMenuLayer) return;
+		if($chatMenuLayer.querySelector('.tzzk__chatList_btnOpenPopupChat')) return;
 
 		const $a = $htmlBtnOpenPopupChat.querySelector("a").cloneNode(true);
 		const channelId = location.pathname.split("/")[2];
@@ -118,7 +119,6 @@
 	}
 	
 	const initChatMenuWrap = ()=>{
-		
 		const $chatMenuWrap = document.querySelector('[class*="live_chatting_header_menu__"]');
 		if(!$chatMenuWrap) return;
 		const chatMenuObserver = new MutationObserver(mutations=>initChatMenuLayer($chatMenuWrap));
