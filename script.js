@@ -55,7 +55,7 @@
 	updateStatus();
 
 	class ChannelAPI{
-		static CHANNEL_DETAIL_URL = "https://api.chzzk.naver.com/service/v1/channels/{channelId}/live-detail";
+		static CHANNEL_DETAIL_URL = "https://api.chzzk.naver.com/service/v2/channels/{channelId}/live-detail";
 
 		constructor(){
 			this._cache = {};
@@ -76,13 +76,14 @@
 				}).catch(reject);
 			});
 		}
-		getViewerCount(channelId){
-			return this.getDetail(channelId).then(res=>res.content.concurrentUserCount);
+		async getViewerCount(channelId){
+			const res = await this.getDetail(channelId);
+			return res.content.concurrentUserCount;
 		}
-		getCategory(channelId){
+		async getCategory(channelId){
 			return this.getDetail(channelId).then(res=>res.content.liveCategoryValue);
 		}
-		getTitle(channelId){
+		async getTitle(channelId){
 			return this.getDetail(channelId).then(res=>res.content.liveTitle);
 		}
 	}
@@ -222,12 +223,13 @@
 		asideObserver.observe($aside, {childList: true});
 	}
 
-	const $layoutWrap = document.querySelector("[class^='layout_wrap__']");
+	// const $layoutWrap = document.querySelector("[class^='layout_wrap__']");
+	const $layoutWrap = document.getElementById("layout-body");
 	const layoutWrapObserver = new MutationObserver(()=>{
-		initAside();
+		// initAside();
 		initChatMenuWrap();// TODO refactor
 	});
-	initAside();
+	// initAside();
 	initChatMenuWrap();
 	layoutWrapObserver.observe($layoutWrap, {childList: true});
 
@@ -282,7 +284,7 @@
 
 			return { updateTimer }
 		})();
-		const $btnTimer = document.createElement("div");
+		// const $btnTimer = document.createElement("div");
 	
 		const onVideoKeyPress=(e)=>{
 			$video.dispatchEvent(new Event('mousemove'));
@@ -349,7 +351,7 @@
 	const channelId = urlParams.get("tzzkPopupChatChannelId");
 	if(!channelId || channelId.length!=32) return;
 
-	const chatChannelId = (await (await fetch("https://api.chzzk.naver.com/service/v1/channels/{channelId}/live-detail".replace("{channelId}", channelId))).json()).content.chatChannelId;	
+	const chatChannelId = (await (await fetch("https://api.chzzk.naver.com/service/v2/channels/{channelId}/live-detail".replace("{channelId}", channelId))).json()).content.chatChannelId;	
 	const chatToken = (await (await fetch("https://comm-api.game.naver.com/nng_main/v1/chats/access-token?channelId={chatChannelId}&chatType=STREAMING".replace("{chatChannelId}", chatChannelId))).json()).content.accessToken;
 
 	const listenChatData = (chatChannelId, chatToken, callback)=>{

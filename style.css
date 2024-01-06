@@ -183,6 +183,22 @@ body{
 	width:30px !important;height:30px !important;
 	margin:0 !important;
 }
+[class*="navigator_category__"]{
+	color: rgb(173, 173, 184) !important;
+	font-size: 13px !important;
+}
+[class*="navigator_count__"]{
+	align-self: start !important;
+	font-size: 13px !important;
+	color: rgb(222, 222, 227) !important;
+	font-weight: 400 !important;
+}
+[class*="navigator_count__"]:before{
+	width:8px !important;
+	height:8px !important;
+	color:rgb(235, 4, 0) !important;
+	left:-5px !important;
+}
 
 
 #live_player_layout{}
