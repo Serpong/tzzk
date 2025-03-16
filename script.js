@@ -6,6 +6,7 @@
 
 
 (function () {
+	/* 
 	const formatComma = (num) => num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 	const formatViewerCount = (count) => {
 		if (count >= 10000)
@@ -13,6 +14,7 @@
 		else
 			return formatComma(count);
 	}
+	*/
 
 	const $layoutBody = document.getElementById("layout-body");
 	if (!$layoutBody) return;
@@ -54,6 +56,7 @@
 	bodyObserver.observe($layoutBody, { childList: true });
 	updateStatus();
 
+	/*
 	class ChannelAPI {
 		static CHANNEL_DETAIL_URL = "https://api.chzzk.naver.com/service/v2/channels/{channelId}/live-detail";
 
@@ -68,7 +71,7 @@
 				}
 				fetch(ChannelAPI.CHANNEL_DETAIL_URL.replace("{channelId}", channelId), {
 					headers: {
-						"Accept": "application/json, text/plain, */*",
+						"Accept": "application/json, text/plain, *\/\*",
 					}
 				}).then(res => res.json()).then(res => {
 					this._cache[channelId] = res;
@@ -89,13 +92,7 @@
 	}
 
 	const channelAPI = new ChannelAPI();
-
-
-
-
-
-
-
+	*/
 
 
 
@@ -126,110 +123,10 @@
 		chatMenuObserver.observe($chatMenuWrap, { childList: true });
 	}
 
-
-
-
-
-
-	const { setTitleElement } = (function addTitle() {
-		const $title = document.createElement("div");
-		const $inner = document.createElement("div");
-		$inner.className = "inner";
-		$title.appendChild($inner);
-		$title.className = "tzzk__navItem-title";
-		document.body.appendChild($title);
-
-		const setTitleElement = ($item, title) => {
-			$item.addEventListener("mouseenter", () => {
-				$title.classList.add("tzzk__navItem-title--active");
-				$inner.innerText = title;
-				$title.style.left = `${$item.getBoundingClientRect().right}px`;
-				$title.style.top = `${$item.getBoundingClientRect().top}px`;
-			});
-			$item.addEventListener("mouseleave", () => {
-				$title.classList.remove("tzzk__navItem-title--active");
-			});
-		}
-
-		return { setTitleElement };
-	})();
-
-	function initAside() {
-		const $aside = document.getElementById("navigation");
-		if (!$aside || $aside.classList.contains("tzzk--active")) return;
-		$aside.classList.add("tzzk--active");
-
-		const initNavWrap = ($navWrap) => {
-			const $navList = $navWrap.querySelector('[class^="navigator_list__"]');
-
-			const initNavList = ($items) => {
-				$items = $items.filter($e => $e.className.startsWith("navigator_item__") && !$e.classList.contains("tzzk__navItem"));
-				const initItem = ($item) => {
-					$item.classList.add("tzzk__navItem");
-					const $counter = document.createElement("span");
-					$counter.className = "tzzk__counter";
-					$item.appendChild($counter);
-
-					const _href_split = $item.href.split("/live/");
-					if (_href_split.length !== 2) { //offline
-						$counter.classList.add("tzzk__counter--offline");
-						$counter.innerText = "오프라인";
-					}
-					else { // live
-						const channelId = _href_split[1];
-						if (!(/^[0-9a-f]{32}$/.test(channelId))) return;
-						// set navNameWrap
-						const $navNameWrap = $item.querySelector('[class^="navigator_name__"]');
-						if (!$navNameWrap) return;
-						// $navNameWrap.classList.add("tzzk__navNameWrap");
-
-						// add category
-						const $category = document.createElement("span");
-						$category.className = "tzzk__category";
-						$navNameWrap.appendChild($category);
-						channelAPI.getCategory(channelId).then(category => {
-							if (category == "talk")
-								category = "Just Chatting";
-							$category.innerText = category;
-						});
-
-
-						$counter.classList.add("tzzk__counter--active");
-
-						channelAPI.getViewerCount(channelId).then(count => {
-							$counter.innerText = formatViewerCount(count);
-						});
-
-
-						channelAPI.getTitle(channelId).then(title => {
-							setTitleElement($item, title);
-						});
-
-					}
-				}
-				$items.forEach(initItem);
-			}
-
-			const navObserver = new MutationObserver(mutations => { mutations.forEach(mutation => initNavList([...mutation.addedNodes])) });
-			initNavList([...$navList.children]);
-			navObserver.observe($navList, { childList: true });
-		}
-
-		const _initNavWrap = ($navWrapList) => {
-			$navWrapList.filter($e => $e.className.startsWith("navigator_wrapper__")).forEach($e => initNavWrap($e))
-		}
-		const asideObserver = new MutationObserver(mutations => { mutations.forEach(mutation => _initNavWrap([...mutation.addedNodes])) });
-		_initNavWrap([...$aside.children]);
-		asideObserver.observe($aside, { childList: true });
-	}
-
-	// const $layoutWrap = document.querySelector("[class^='layout_wrap__']");
 	const $layoutWrap = document.getElementById("layout-body");
 	const layoutWrapObserver = new MutationObserver(() => {
-		// initAside();
 		initChatMenuWrap();// TODO refactor
 	});
-	// initAside();
 	initChatMenuWrap();
 	layoutWrapObserver.observe($layoutWrap, { childList: true });
 
@@ -247,11 +144,14 @@
 			return;
 		}
 		const $video = $playerWrap.querySelector(".webplayer-internal-video");
+		if (!$video) {
+			console.warn("video not found");
+			return;
+		}
 		const $leftBtnWrap = $playerWrap.querySelector(".pzp-pc__bottom-buttons-left");
 
 		const { updateTimer } = (function initTimer() {
 			const $timer = document.createElement("div");
-			let prevDiff = -10;
 			$timer.className = "tzzk__timer";
 			$timer.innerText = "실시간";
 			$leftBtnWrap.appendChild($timer);
@@ -267,19 +167,16 @@
 				const l = $video.buffered.length;
 				if (!l) return;
 				const diff = Math.max($video.buffered.end(l - 1) - $video.currentTime - 2.5, 0);
-				if (Math.abs(prevDiff - diff) > 1) {
-					if (Math.round(diff) != 0) {
-						$timer.classList.remove("tzzk__timer--live");
-						const min = Math.floor(diff / 60);
-						const sec = Math.floor(diff % 60).toString().padStart(2, "0");
-						$timer.innerText = `-${min}:${sec}`;
-					}
-					else {
-						$timer.classList.add("tzzk__timer--live");
-						$timer.innerText = "";
-					}
+				if (Math.round(diff) != 0) {
+					$timer.classList.remove("tzzk__timer--live");
+					const min = Math.floor(diff / 60);
+					const sec = Math.floor(diff % 60).toString().padStart(2, "0");
+					$timer.innerText = `-${min}:${sec}`;
 				}
-				// prevDiff = diff;
+				else {
+					$timer.classList.add("tzzk__timer--live");
+					$timer.innerText = "";
+				}
 			}
 
 			return { updateTimer }
@@ -294,11 +191,11 @@
 			else if (e.keyCode === 39) {
 				$video.currentTime = Math.min($video.currentTime + 3, $video.buffered.end($video.buffered.length - 1) - 1);
 			}
-			else if (e.keyCode === 77) {
+			/* else if (e.keyCode === 77) {
 				const $btnVolume = $playerWrap.querySelector(".pzp-pc-volume-button");
 				$btnVolume.click();
 				// $video.muted = !$video.muted;
-			}
+			} */
 		}
 		const onVideoPause = () => {
 			$playerWrap.classList.add("playable");
@@ -374,10 +271,6 @@
 			data.bdy.forEach(callback);
 		});
 	}
-
-
-	console.log(chatChannelId);
-	console.log(chatToken);
 
 	const { addChat } = (function initUI() {
 		document.documentElement.innerHTML = '';
