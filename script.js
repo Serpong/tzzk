@@ -150,53 +150,65 @@
 		}
 		const $leftBtnWrap = $playerWrap.querySelector(".pzp-pc__bottom-buttons-left");
 
-		const { updateTimer } = (function initTimer() {
-			const $timer = document.createElement("div");
-			$timer.className = "tzzk__timer";
-			$timer.innerText = "실시간";
-			$leftBtnWrap.appendChild($timer);
+		const initTimerFeature = () => {
+			const { updateTimer } = (function initTimer() {
+				$playerWrap.querySelector(".live_time").style.position = "absolute";
+				$playerWrap.querySelector(".live_time").style.left = "-9999px";
 
-			const onTimerClick = () => {
-				if ($timer.classList.contains("tzzk__timer--live"))
-					return;
-				$video.currentTime = $video.buffered.end($video.buffered.length - 1) - 1;
-			}
-			$timer.addEventListener("click", onTimerClick);
+				const $timer = document.createElement("div");
+				$timer.className = "tzzk__timer";
+				$timer.innerText = "실시간";
+				$leftBtnWrap.appendChild($timer);
 
-			const updateTimer = () => {
-				const l = $video.buffered.length;
-				if (!l) return;
-				const diff = Math.max($video.buffered.end(l - 1) - $video.currentTime - 2.5, 0);
-				if (Math.round(diff) != 0) {
-					$timer.classList.remove("tzzk__timer--live");
-					const min = Math.floor(diff / 60);
-					const sec = Math.floor(diff % 60).toString().padStart(2, "0");
-					$timer.innerText = `-${min}:${sec}`;
+				const onTimerClick = () => {
+					if ($timer.classList.contains("tzzk__timer--live"))
+						return;
+					$video.currentTime = $video.buffered.end($video.buffered.length - 1) - 1;
 				}
-				else {
-					$timer.classList.add("tzzk__timer--live");
-					$timer.innerText = "";
+				$timer.addEventListener("click", onTimerClick);
+
+				const updateTimer = () => {
+					const l = $video.buffered.length;
+					if (!l) return;
+					const diff = Math.max($video.buffered.end(l - 1) - $video.currentTime - 2.5, 0);
+					if (Math.round(diff) != 0) {
+						$timer.classList.remove("tzzk__timer--live");
+						const min = Math.floor(diff / 60);
+						const sec = Math.floor(diff % 60).toString().padStart(2, "0");
+						$timer.innerText = `-${min}:${sec}`;
+					}
+					else {
+						$timer.classList.add("tzzk__timer--live");
+						$timer.innerText = "";
+					}
+				}
+
+				return { updateTimer }
+			})();
+			// const $btnTimer = document.createElement("div");
+
+			const onVideoKeyPress = (e) => {
+				$video.dispatchEvent(new Event('mousemove'));
+				if (e.keyCode === 37) {
+					$video.currentTime -= 3;
+				}
+				else if (e.keyCode === 39) {
+					$video.currentTime = Math.min($video.currentTime + 3, $video.buffered.end($video.buffered.length - 1) - 1);
 				}
 			}
-
-			return { updateTimer }
-		})();
-		// const $btnTimer = document.createElement("div");
-
-		const onVideoKeyPress = (e) => {
-			$video.dispatchEvent(new Event('mousemove'));
-			if (e.keyCode === 37) {
-				$video.currentTime -= 3;
+			const onVideoTimeUpdate = () => {
+				updateTimer();
 			}
-			else if (e.keyCode === 39) {
-				$video.currentTime = Math.min($video.currentTime + 3, $video.buffered.end($video.buffered.length - 1) - 1);
-			}
-			/* else if (e.keyCode === 77) {
-				const $btnVolume = $playerWrap.querySelector(".pzp-pc-volume-button");
-				$btnVolume.click();
-				// $video.muted = !$video.muted;
-			} */
+			$playerWrap.addEventListener("keydown", onVideoKeyPress);
+			$video.addEventListener("timeupdate", onVideoTimeUpdate);
 		}
+
+		if (!$playerWrap.classList.contains("timemachine_mode")) {
+			initTimerFeature();
+		}
+
+
+
 		const onVideoPause = () => {
 			$playerWrap.classList.add("playable");
 		}
@@ -208,15 +220,9 @@
 				$video.play();
 			}
 		}
-		const onVideoTimeUpdate = () => {
-			updateTimer();
-		}
-
-		$playerWrap.addEventListener("keydown", onVideoKeyPress);
 		$video.addEventListener("pause", onVideoPause);
 		$video.addEventListener("play", onVideoPlay);
 		$video.addEventListener("click", onVideoClick);
-		$video.addEventListener("timeupdate", onVideoTimeUpdate);
 
 		$playerWrap.addEventListener("dblclick", (e) => {
 			if ($playerWrap.querySelector(".pzp-pc").classList.contains("pzp-pc--adbreak"))
