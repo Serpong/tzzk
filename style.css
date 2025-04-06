@@ -176,7 +176,7 @@ input:checked+[class*="subscription_cycle_button__"],
 		border-top: 1px solid rgba(83, 83, 95, .48) !important;
 	}
 
-	& [class*="live_chatting_message_container__"] [class*="name_text__"] {
+	& [class*="live_chatting_message_container__"] [class*="live_chatting_username_nickname__"] {
 		filter: saturate(1.7) !important;
 	}
 }
@@ -230,6 +230,11 @@ input:checked+[class*="subscription_cycle_button__"],
 
 [class*="live_chatting_message_container__"] [class*="name_text__"] {
 	font-weight: bold !important;
+}
+
+[class*="live_chatting_message_container__"] [class*="live_chatting_username_nickname__"][style*="rgba("] {
+	background: rgba(147, 147, 147, 0.3);
+	background-clip: text;
 }
 
 /*
